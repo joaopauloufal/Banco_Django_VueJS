@@ -1,3 +1,4 @@
 from django.contrib import admin
+from .models import Banco, Agencia, Cliente, Conta
 
-# Register your models here.
+admin.site.register([Banco, Agencia, Cliente, Conta])
