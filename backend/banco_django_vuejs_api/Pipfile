@@ -9,6 +9,7 @@ markdown = "*"
 django-filter = "*"
 django-environ = "*"
 environ = "*"
+psycopg2 = "*"
 
 [dev-packages]
 
