@@ -12,7 +12,6 @@ RUN pip install --upgrade pip
 COPY ./banco_django_vuejs_api/requirements.txt .
 RUN pip install -r requirements.txt
 
-COPY ./banco_django_vuejs_api/banco_django_vuejs_api/.env.dev.example ./banco_django_vuejs_api/banco_django_vuejs_api/.env
 COPY ./.docker/entrypoint.sh .
 
 COPY . .
