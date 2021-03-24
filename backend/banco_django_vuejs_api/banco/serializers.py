@@ -27,3 +27,7 @@ class ContaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Conta
         fields = ['id', 'numero', 'tipo', 'cliente', 'agencia', 'saldo']
+
+
+class ContaDepositoSerializer(serializers.Serializer):
+    valor = serializers.DecimalField(max_digits=19, decimal_places=2, required=True, min_value=0.1)
