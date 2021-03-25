@@ -1,7 +1,10 @@
-from rest_framework import viewsets, response, status
+from rest_framework import viewsets, response, status, serializers
 from rest_framework.decorators import action
 from .models import Banco, Agencia, Cliente, Conta
-from .serializers import BancoSerializer, AgenciaSerializer, ClienteSerializer, ContaSerializer, ContaDepositoSerializer
+from .serializers import (
+    BancoSerializer, AgenciaSerializer, ClienteSerializer, ContaSerializer, ContaDepositoSerializer,
+    ContaSaqueSerializer
+)
 from decimal import Decimal
 from django.db.transaction import atomic
 
@@ -52,4 +55,18 @@ class ContaViewSet(viewsets.ModelViewSet):
             conta.saldo += Decimal(serializer.data['valor'])
             conta.save()
             return response.Response({'message': 'Depósito realizado com sucesso!'})
+        return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @atomic
+    @action(detail=True, methods=['put'], serializer_class=ContaSaqueSerializer)
+    def sacar(self, request, *args, **kwargs):
+        conta = self.get_object()
+        serializer = ContaDepositoSerializer(instance=conta, data=request.data)
+        if serializer.is_valid():
+            valor = Decimal(serializer.data['valor'])
+            if valor > conta.saldo:
+                raise serializers.ValidationError({'valor': ['Saldo insuficiente.']})
+            conta.saldo -= valor
+            conta.save()
+            return response.Response({'message': 'Saque realizado com sucesso!'})
         return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

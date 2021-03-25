@@ -30,4 +30,8 @@ class ContaSerializer(serializers.ModelSerializer):
 
 
 class ContaDepositoSerializer(serializers.Serializer):
-    valor = serializers.DecimalField(max_digits=19, decimal_places=2, required=True, min_value=0.1)
+    valor = serializers.DecimalField(max_digits=19, decimal_places=2, required=True, min_value=0.01)
+
+
+class ContaSaqueSerializer(serializers.Serializer):
+    valor = serializers.DecimalField(max_digits=19, decimal_places=2, required=True, min_value=0.01)
