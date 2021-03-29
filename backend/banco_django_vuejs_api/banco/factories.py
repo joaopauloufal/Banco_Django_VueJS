@@ -39,4 +39,3 @@ class ContaFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Conta
-        django_get_or_create = ('tipo', )

@@ -1,7 +1,7 @@
 from django.test import TestCase
 from .factories import AgenciaFactory, BancoFactory, ContaFactory, ClienteFactory
 from rest_framework import status
-from .models import Banco, Agencia
+from .models import Banco, Agencia, Cliente
 from django.forms.models import model_to_dict
 import factory
 import json
@@ -131,4 +131,64 @@ class ApiAgenciaTest(TestCase):
 
         self.client.delete(f'/api/v1/agencias/{agencia.id}/')
         response = self.client.get(f'/api/v1/agencias/{agencia.id}/', content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class ApiClienteTest(TestCase):
+
+    def test_list(self):
+        clientes = ClienteFactory.create_batch(3)
+        response = self.client.get('/api/v1/clientes/', content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(clientes), len(response.data))
+
+    def test_create(self):
+        data = factory.build(dict, FACTORY_CLASS=ClienteFactory)
+        response = self.client.post('/api/v1/clientes/', data, content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Cliente.objects.count(), 1)
+
+    def test_list_cliente_contas(self):
+        banco = BancoFactory()
+        agencia = AgenciaFactory(banco=banco)
+        cliente = ClienteFactory()
+        ContaFactory(cliente=cliente, agencia=agencia, tipo='FISICA')
+        ContaFactory(cliente=cliente, agencia=agencia, tipo='JURIDICA')
+        response = self.client.get(f'/api/v1/clientes/{cliente.id}/contas/', content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(2, len(response.data))
+
+    def test_create_error(self):
+        data = factory.build(dict, FACTORY_CLASS=ClienteFactory)
+        del data['nome']
+        response = self.client.post('/api/v1/clientes/', data, content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_show(self):
+        cliente = ClienteFactory()
+        response = self.client.get(f'/api/v1/clientes/{cliente.id}/', content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_update(self):
+        cliente = ClienteFactory()
+        data = factory.build(dict, FACTORY_CLASS=ClienteFactory)
+        response = self.client.put(f'/api/v1/clientes/{cliente.id}/', data, content_type='application/json')
+        cliente_atualizado = Cliente.objects.first()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(json.loads(response.content), model_to_dict(cliente_atualizado))
+
+    def test_update_error(self):
+        cliente = ClienteFactory()
+        data = factory.build(dict, FACTORY_CLASS=ClienteFactory)
+        del data['nome']
+        response = self.client.put(f'/api/v1/clientes/{cliente.id}/', data, content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_delete(self):
+        cliente = ClienteFactory()
+        response = self.client.get(f'/api/v1/clientes/{cliente.id}/', content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.client.delete(f'/api/v1/clientes/{cliente.id}/')
+        response = self.client.get(f'/api/v1/clientes/{cliente.id}/', content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
