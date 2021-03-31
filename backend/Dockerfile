@@ -12,8 +12,8 @@ RUN pip install --upgrade pip
 COPY ./banco_django_vuejs_api/requirements.txt .
 RUN pip install -r requirements.txt
 
-COPY ./.docker/entrypoint.sh .
+EXPOSE 8000
 
 COPY . .
 
-ENTRYPOINT ["/usr/src/app/.docker/entrypoint.sh"]
+ENTRYPOINT ["./.docker/entrypoint.sh"]

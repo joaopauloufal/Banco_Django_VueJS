@@ -14,5 +14,6 @@ fi
 cp -r ./banco_django_vuejs_api/.env.dev.example ./banco_django_vuejs_api/.env
 python manage.py migrate
 python manage.py initadmin
+python manage.py runserver 0.0.0.0:8000
 
 exec "$@"

@@ -3,7 +3,7 @@ version: '3.8'
 services:
   api:
     build: ./backend
-    command: python manage.py runserver 0.0.0.0:8000
+    entrypoint: /usr/src/app/.docker/entrypoint.sh
     volumes:
       - ./backend:/usr/src/app
     ports:
@@ -14,10 +14,23 @@ services:
     image: postgres:13.2-alpine
     volumes:
       - ./backend/.docker/dbdata:/var/lib/postgresql/data/
+    ports:
+      - 5432:5432
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=123456
       - POSTGRES_DB=banco_django_vuejs
+
+  frontend:
+    build: ./frontend
+    entrypoint: /usr/src/app/.docker/entrypoint.sh
+    volumes:
+      - ./frontend:/usr/src/app
+    ports: 
+      - 3000:3000
+    environment: 
+      - NUXT_HOST=0.0.0.0
+      - NUXT_PORT=3000
 
 volumes:
   postgres_data:
