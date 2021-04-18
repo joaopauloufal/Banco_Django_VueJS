@@ -52,7 +52,7 @@ export default class LayoutDefault extends Vue {
     },
     {
       title: 'Bancos',
-      icon: 'lightbulb',
+      icon: 'bank',
       to: { name: 'bancos' },
     },
   ]
