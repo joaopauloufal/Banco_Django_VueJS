@@ -2,11 +2,11 @@
   <div>
     <breadcrumb>
       <li><nuxt-link to="/bancos">Bancos</nuxt-link></li>
-      <li class="is-active"><a href="#" aria-current="page">Criar novo banco</a></li>
+      <li class="is-active"><a href="#" aria-current="page">Editar banco</a></li>
     </breadcrumb>
     <div class="columns">
       <div class="column is-6">
-        <form-banco v-model="formData" titulo="Criar novo banco" />
+        <form-banco v-model="formData" :bancoId="this.$route.params.id" titulo="Editar banco" />
       </div>
     </div>
   </div>
@@ -25,7 +25,7 @@ import { ToastProgrammatic as Toast } from 'buefy'
     Breadcrumb, FormBanco
   }
 })
-export default class BancosCreate extends Vue {
+export default class BancosEdit extends Vue {
 
   formData: Banco = {
     codigo_banco: '',
@@ -33,10 +33,14 @@ export default class BancosCreate extends Vue {
   }
 
   async submit ():Promise<void> {
-    await bancos.addBanco(this.formData).then(() => {
+    const formData: any = {
+      banco: this.formData,
+      id: this.$route.params.id
+    }
+    await bancos.updateBanco(formData).then(() => {
       Toast.open(
         {
-          message: 'Banco criado com sucesso!',
+          message: 'Banco atualizado com sucesso!',
           type: 'is-success',
           duration: 4000
         }

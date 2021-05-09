@@ -4,7 +4,7 @@
       <div class="column">
         <b-button
           type="is-primary"
-          tag="router-link"
+          tag="nuxt-link"
           class="is-pulled-right"
           icon-left="plus"
           to="bancos/create"
@@ -27,8 +27,13 @@
           <b-table-column label="Nome" field="nome" v-slot="props" sortable searchable>
             {{ props.row.nome }}
           </b-table-column>
-          <b-table-column label="Ações">
-            <b-button type="is-primary" icon-right="pencil"/>
+          <b-table-column label="Ações" v-slot="props">
+            <b-button
+              type="is-primary"
+              icon-right="pencil"
+              tag="nuxt-link"
+              :to="editLink(props.row.id)"
+            />
             <b-button type="is-primary" icon-right="delete"/>
           </b-table-column>
           <template #empty>
@@ -55,6 +60,10 @@ export default class BancosIndex extends Vue {
 
   get bancosList ():Banco[] {
     return bancos.bancosList
+  }
+
+  editLink (id:string):string {
+    return `/bancos/edit/${id}`
   }
 
 }

@@ -7,21 +7,51 @@ import { $axios } from '~/utils/api'
   stateFactory: true,
   namespaced: true,
 })
-
-class BancoModule extends VuexModule {
+export default class BancoModule extends VuexModule {
   bancosList: Banco[] = []
+  banco: Banco = {
+    codigo_banco: '', nome: ''
+  }
+  errors: any[] = []
 
   @Mutation
-  setBancos(bancos: Banco[]) {
+  setBancos(bancos: Banco[]):void {
     this.bancosList = bancos
   }
 
-  @Action
-  async getBancos() {
-    const bancos = await $axios.$get('bancos/')
-    this.setBancos(bancos)
+  @Mutation
+  setBanco(banco: Banco):void {
+    this.banco = banco
+  }
+
+  @Mutation
+  setErrors(errors: any[]):void {
+    this.errors = errors
+  }
+
+  @Mutation
+  clearErrors():void {
+    this.errors = []
+  }
+
+  @Action({ commit: 'setBancos' })
+  async getBancos():Promise<void> {
+    return $axios.$get('bancos/')
+  }
+
+  @Action({rawError:true, commit: 'setBanco' })
+  async getBanco(bancoId:number):Promise<void> {
+    return $axios.$get(`bancos/${bancoId}/`)
+  }
+
+  @Action({rawError:true})
+  addBanco(formData:Banco) {
+    return $axios.$post('bancos/', formData)
+  }
+
+  @Action({rawError:true})
+  updateBanco(formData: any) {
+    return $axios.$put(`bancos/${formData.id}/`, formData.banco)
   }
 
 }
-
-export default BancoModule
