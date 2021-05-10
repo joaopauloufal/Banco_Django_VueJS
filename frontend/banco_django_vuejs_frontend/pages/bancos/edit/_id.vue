@@ -28,16 +28,13 @@ import { ToastProgrammatic as Toast } from 'buefy'
 export default class BancosEdit extends Vue {
 
   formData: Banco = {
+    id: '',
     codigo_banco: '',
     nome: ''
   }
 
   async submit ():Promise<void> {
-    const formData: any = {
-      banco: this.formData,
-      id: this.$route.params.id
-    }
-    await bancos.updateBanco(formData).then(() => {
+    await bancos.updateBanco(this.formData).then(() => {
       Toast.open(
         {
           message: 'Banco atualizado com sucesso!',

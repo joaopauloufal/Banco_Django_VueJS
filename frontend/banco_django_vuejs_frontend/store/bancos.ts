@@ -10,7 +10,7 @@ import { $axios } from '~/utils/api'
 export default class BancoModule extends VuexModule {
   bancosList: Banco[] = []
   banco: Banco = {
-    codigo_banco: '', nome: ''
+    id: '', codigo_banco: '', nome: ''
   }
   errors: any[] = []
 
@@ -45,13 +45,18 @@ export default class BancoModule extends VuexModule {
   }
 
   @Action({rawError:true})
-  addBanco(formData:Banco) {
-    return $axios.$post('bancos/', formData)
+  addBanco(banco:Banco) {
+    return $axios.$post('bancos/', banco)
   }
 
   @Action({rawError:true})
-  updateBanco(formData: any) {
-    return $axios.$put(`bancos/${formData.id}/`, formData.banco)
+  async updateBanco(banco:Banco) {
+    return $axios.$put(`bancos/${banco.id}/`, banco)
+  }
+
+  @Action({rawError:true})
+  async deleteBanco(id:string) {
+    return $axios.$delete(`bancos/${id}/`)
   }
 
 }

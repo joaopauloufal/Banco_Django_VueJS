@@ -44,6 +44,7 @@ export default class FormBanco extends Vue {
   @Prop({ required: false }) bancoId!: number
 
   formData: Banco = {
+    id: '',
     codigo_banco: '',
     nome: ''
   }

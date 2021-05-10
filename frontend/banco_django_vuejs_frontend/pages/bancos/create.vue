@@ -28,6 +28,7 @@ import { ToastProgrammatic as Toast } from 'buefy'
 export default class BancosCreate extends Vue {
 
   formData: Banco = {
+    id: '',
     codigo_banco: '',
     nome: ''
   }
